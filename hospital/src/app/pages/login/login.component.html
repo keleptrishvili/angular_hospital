@@ -1,0 +1,18 @@
+<div class="d_flex justify-content-center">
+    <div class="card" style="width: 29rem;">
+        <div class="card-body">
+          <h5 class="card-title">Login</h5>
+          <form [formGroup]="form">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email address</label>
+                <input type="email" class="form-control" formControlName="email" placeholder="Email Address"> 
+            </div>
+            <div class="mb-3">
+                <label for="Password" class="form-label">Password</label>
+                <input type="password" class="form-control" formControlName="password" placeholder="password"> 
+            </div>
+            <button type="submit" class="btn btn-success" [disabled]="form.invalid">login</button>
+          </form>
+        </div>
+      </div>
+</div>
