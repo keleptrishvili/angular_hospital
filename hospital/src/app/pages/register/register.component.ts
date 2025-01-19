@@ -28,30 +28,20 @@ export class RegisterComponent {
     });
   }
 
-  onSubmit() {
+  onSubmit(): void {
     if (this.form.valid) {
-      const userData = {
-        name: this.form.value.name,
-        email: this.form.value.email,
-        password: this.form.value.password,
-      };
-
-      this.authService.register(userData).subscribe({
-        next: () => {
-          this.successMessage = 'Registration successful!';
-          this.errorMessage = '';
-          setTimeout(() => {
-            this.router.navigate(['/login']);
-          }, 2000);
+      const userData = this.form.value;
+      this.authService.register(userData).subscribe(
+        (response: any) => {
+          console.log('Registration successful:', response);
+          alert('Registration successful!');
         },
-        error: (error: { error: { message: string; }; }) => {
+        (error: any) => {
           console.error('Registration error:', error);
-          this.errorMessage = error.error?.message || 'Registration failed!';
-          this.successMessage = '';
+          alert('Registration failed. Check console for details.');
         }
-      });
-    } else {
-      this.errorMessage = 'Please fill out all required fields correctly.';
+      );
     }
   }
+  
 }

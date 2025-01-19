@@ -1,55 +1,51 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\File; // Import File Facade
 
 class AuthController extends Controller
 {
-    // Register a new user
     public function register(Request $request)
     {
-        // Validate request
-        $validatedData = $request->validate([
+        // Validate incoming data
+        $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:6',
         ]);
 
-        // Create the user
-        $user = User::create([
-            'name' => $validatedData['name'],
-            'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']),
-        ]);
+        // Data to be saved in the JSON file
+        $userData = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password), // You should hash the password before saving
+        ];
 
-        // Return response (you can also return a token here)
-        return response()->json(['message' => 'User registered successfully'], 201);
-    }
+        // Define the path to the JSON file
+        $jsonFilePath = storage_path('app/users.json');
 
-    // Login and return JWT token
-    public function login(Request $request)
-    {
-        // Validate request
-        $validatedData = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
-
-        // Attempt to login the user
-        if (Auth::attempt(['email' => $validatedData['email'], 'password' => $validatedData['password']])) {
-            // Generate JWT token
-            $token = JWTAuth::fromUser(Auth::user());
-
-            // Return the token to the client
-            return response()->json(['token' => $token], 200);
+        // Check if the file exists
+        if (File::exists($jsonFilePath)) {
+            // Get existing data
+            $existingData = json_decode(File::get($jsonFilePath), true);
+        } else {
+            // Create an empty array if no file exists
+            $existingData = [];
         }
 
-        // Return error if authentication fails
-        return response()->json(['error' => 'Unauthorized'], 401);
+        // Append the new user data to the existing data
+        $existingData[] = $userData;
+
+        // Save the updated data back to the JSON file
+        try {
+            File::put($jsonFilePath, json_encode($existingData, JSON_PRETTY_PRINT));
+        } catch (\Exception $e) {
+            // Handle the error if file writing fails
+            return response()->json(['message' => 'Error saving data: ' . $e->getMessage()], 500);
+        }
+
+        return response()->json(['message' => 'Registration successful!']);
     }
 }
+

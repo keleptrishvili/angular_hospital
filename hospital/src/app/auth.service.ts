@@ -1,21 +1,18 @@
+// File: src/app/auth.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../environments/environments';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root', // Ensures this service is provided globally
 })
 export class AuthService {
-  private apiUrl = environment.apiUrl;
-
+  register(userData: any) {
+    throw new Error('Method not implemented.');
+  }
   constructor(private http: HttpClient) {}
 
-  register(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, userData);
-  }
-
-  login(credentials: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, credentials);
+  // Example API call
+  getUserData() {
+    return this.http.get('http://127.0.0.1:8000/api/register');
   }
 }

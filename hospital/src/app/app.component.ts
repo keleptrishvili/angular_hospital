@@ -1,12 +1,14 @@
+// File: src/app/app.component.ts
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
+  standalone: true,
   selector: 'app-root',
-  imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css'],
+  imports: [HttpClientModule], // Import HttpClientModule here
 })
 export class AppComponent {
-  title = 'hospital';
+  // Your component logic
 }
